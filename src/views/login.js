@@ -4,23 +4,51 @@ import FormGroup from "../components/FormGroup";
 import {withRouter} from 'react-router-dom';
 import axios from 'axios'
 
+
+function WarningBanner(props) {
+
+
+    if (!props.warn) {
+        return null;
+    }else{
+    
+        return (
+            <div className="col align-self-center alert alert-dismissible alert-warning">
+                <h4 className="alert-heading">Atenção!</h4>
+                <span className="mb-0">{props.msg}</span>
+            </div>
+        );   
+    }
+  }
 class Login extends React.Component {
 
     state = {
         email: '',
         senha: '',
-        msgErro: null
+        msgErro: '',
+        showWarning: false
     }
 
-    entrar = () => {
+   
+
+    entrar =  () => {
         axios.post('http://localhost:8080/api/usuarios/autenticar',
         {
             email: this.state.email,
             senha: this.state.senha
-        }).then(response => {
+        }).then(response => {            
             this.props.history.push('/home');
         }).catch(erro => {
-            this.setState({msgErro: erro.response.data});
+            var msg = erro.response.data;
+            if(!msg){
+                this.setState({msgErro: 'Não foi possível executar a consulta, tente novamente mais tarde'});
+                
+            }else{
+                this.setState({msgErro: msg});
+            }
+
+            this.setState({showWarning: true});
+            
         });
     }
 
@@ -28,15 +56,17 @@ class Login extends React.Component {
         this.props.history.push('/cadastro-usuario');
     }
 
+
+
     render() {
         return (
             <div className="row">
                 <div className="col-md-6" style={{ position: "relative", left: "300px" }}>
+                <div className="row">
+                <WarningBanner warn={this.state.showWarning} msg={this.state.msgErro}/>    
+                </div>                    
                     <div className="bs-docs-section">
                         <Card title="Login">
-                        <div className="row">
-                            <span>{this.state.msgErro}</span>
-                        </div>
                             <div className="row">
                                 <div className="col-lg-12">
                                     <div className="bs-component">
@@ -61,7 +91,7 @@ class Login extends React.Component {
                                                 />
                                             </FormGroup>
                                             <button className="btn btn-success" onClick={this.entrar}>Entrar</button>
-                                            <button className="btn btn-danger" onClick={this.prepareCadastrar}>Cadastrar</button>
+                                            <button style={{marginLeft:5}} className="btn btn-danger" onClick={this.prepareCadastrar}>Cadastrar</button>
                                         </fieldset>
                                     </div>
                                 </div>

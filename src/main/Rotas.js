@@ -11,7 +11,7 @@ export default function Rotas(){
             <Switch>
                 <Route path="/login" component={Login}/>
                 <Route path="/cadastro-usuario" component={CadastroUsuario}/>
-                <Route path="/" component={Home}/>
+                <Route path="/home" component={Home}/>
             </Switch>
         </HashRouter>
     );
